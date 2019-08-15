@@ -45,30 +45,20 @@ class PrototypeProduct extends Component {
   getSizeOptions = () => {
     let { product } = this.state;
 
-    return product.stock
-      ? product.stock.map((stockQuantity, index) => {
-          switch (stockQuantity.quantity) {
-            case stockQuantity.quantity < 1:
-              return (
-                <option key={index} disabled value={stockQuantity.size}>
-                  {stockQuantity.size} Out Of Stock
-                </option>
-              );
-            case stockQuantity.quantity < 5:
-              return (
-                <option key={index} value={stockQuantity.size}>
-                  {stockQuantity.size} Low Stock
-                </option>
-              );
-            default:
-              return (
-                <option key={index} value={stockQuantity.size}>
-                  {stockQuantity.size}
-                </option>
-              );
-          }
-        })
-      : null;
+    if (this.state.product.stock != null) {
+      return this.state.product.stock.map(item => {
+        if (item.quantity <= 0) {
+          return (
+            <option disabled value={item.size}>
+              {item.size} Out Of Stock
+            </option>
+          );
+        } else if (item.quantity <= 5) {
+          return <option value={item.size}>{item.size} Low Stock</option>;
+        }
+        return <option value={item.size}>{item.size}</option>;
+      });
+    }
   };
 
   throwAlert = () => {
@@ -113,13 +103,6 @@ class PrototypeProduct extends Component {
 
   addToBasket = (e, product) => {
     e.preventDefault();
-
-    this.setState({
-      ...this.state,
-      selectedSize: product.size
-    });
-
-    console.log(product);
 
     let index = this.state.product.stock.findIndex(item => {
       return this.state.selectedSize == item.size;

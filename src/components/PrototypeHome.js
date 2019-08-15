@@ -31,7 +31,7 @@ class Prototype extends Component {
 
   renderImages() {
     return this.state.products.map(product => (
-      <Col xs={6} s={9} md={3}>
+      <Col s={6} md={3}>
         <Col className="pr-0 shoe-image mb-3 text-center">
           <Link to={`/product/${product._id}`}>
             <Image className="promo-image" src={product.images[0]} />
