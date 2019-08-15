@@ -1,13 +1,18 @@
 import React, { Component } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Jumbotron from "react-bootstrap/Jumbotron";
-import Form from "react-bootstrap/Form";
-import Alert from "react-bootstrap/Alert";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Jumbotron,
+  Form,
+  Alert,
+  Image
+} from "react-bootstrap";
+
 import PrototypeSearch from "./PrototypeSearch";
 import PrototypeCategories from "./PrototypeCategories";
+import axios from "axios";
 
 import "../styles/Prototype-styles.css";
 
@@ -22,38 +27,48 @@ class PrototypeProduct extends Component {
 
   handleChange = e => {
     this.setState({ selectedSize: e.target.value });
-    this.getSizes();
+    this.getSizeOptions();
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchProductById();
   }
 
-  fetchData = () => {
-    fetch("http://localhost:8080/product")
-      .then(results => {
-        return results.json();
-      })
-      .then(data => {
-        this.setState({ product: data[0] });
-      });
+  fetchProductById = () => {
+    let productId = this.props.match.params.id;
+    axios.get(`http://localhost:8080/product/${productId}`).then(products => {
+      let { data } = products;
+      this.setState({ product: data });
+    });
   };
 
-  getSizes = () => {
-    if (this.state.product.stock != null) {
-      return this.state.product.stock.map(item => {
-        if (item.quantity <= 0) {
-          return (
-            <option disabled value={item.size}>
-              {item.size} Out Of Stock
-            </option>
-          );
-        } else if (item.quantity <= 5) {
-          return <option value={item.size}>{item.size} Low Stock</option>;
-        }
-        return <option value={item.size}>{item.size}</option>;
-      });
-    }
+  getSizeOptions = () => {
+    let { product } = this.state;
+
+    return product.stock
+      ? product.stock.map((stockQuantity, index) => {
+          switch (stockQuantity.quantity) {
+            case stockQuantity.quantity < 1:
+              return (
+                <option key={index} disabled value={stockQuantity.size}>
+                  {stockQuantity.size} Out Of Stock
+                </option>
+              );
+            case stockQuantity.quantity < 5:
+              return (
+                <option key={index} value={stockQuantity.size}>
+                  {stockQuantity.size} Low Stock
+                </option>
+              );
+            default:
+              return (
+                <option key={index} value={stockQuantity.size}>
+                  {stockQuantity.size}
+                </option>
+              );
+          }
+        })
+      : null;
   };
 
   throwAlert = () => {
@@ -71,8 +86,15 @@ class PrototypeProduct extends Component {
     }
   };
 
-  addToBasket = e => {
+  addToBasket = (e, product) => {
     e.preventDefault();
+
+    this.setState({
+      ...this.state,
+      selectedSize: product.size
+    });
+
+    console.log(product);
 
     let index = this.state.product.stock.findIndex(item => {
       return this.state.selectedSize == item.size;
@@ -97,22 +119,15 @@ class PrototypeProduct extends Component {
         )
       }),
       () => {
-        fetch("http://localhost:8080/product/" + this.state.product._id, {
-          method: "PATCH",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            stock: [
-              {
-                size: this.state.selectedSize,
-                quantity: newStock
-              }
-            ]
-          })
+        axios.patch(`http://localhost:8080/product/${this.state.product._id}`, {
+          stock: [
+            {
+              size: this.state.selectedSize,
+              quantity: newStock
+            }
+          ]
         });
-        this.fetchData();
+        this.fetchProductById();
 
         allItems.push(shoe);
         localStorage.setItem("basket", JSON.stringify(allItems));
@@ -122,8 +137,17 @@ class PrototypeProduct extends Component {
     );
   };
 
+  renderImage = product => {
+    return (
+      <Col className="text-center" md={12} xs={12}>
+        <Image className="hero-image mb-3" src={product.images[0]} />
+      </Col>
+    );
+  };
+
   render() {
-    const shoe = this.state.product;
+    const { product } = this.state;
+    console.log(product);
 
     return (
       <React.Fragment>
@@ -133,9 +157,9 @@ class PrototypeProduct extends Component {
               <PrototypeSearch />
             </Col>
             <Col md={9} xs={12}>
-              <Jumbotron fluid className="main-image mb-3 text-center">
-                Image of product{" "}
-              </Jumbotron>
+              {product.images
+                ? this.renderImage(product)
+                : console.log("not true")}
             </Col>
           </Row>
           <Row>
@@ -145,10 +169,10 @@ class PrototypeProduct extends Component {
             <Col xs={12} md={9}>
               <Col className="shoe-details pb-3 mb-3 text-center">
                 <Col sm={3} lg={12}>
-                  <p>Name: {shoe.name}</p>
-                  <p>Description: {shoe.description}</p>
-                  <p>Colour: {shoe.colour}</p>
-                  <p>Price: £{shoe.price}</p>
+                  <p>Name: {product.name}</p>
+                  <p>Description: {product.description}</p>
+                  <p>Colour: {product.colour}</p>
+                  <p>Price: £{product.price}</p>
                   <Form>
                     <Form.Group controlId="exampleForm.ControlSelect1">
                       <Form.Label>Size:</Form.Label>
@@ -158,14 +182,14 @@ class PrototypeProduct extends Component {
                         onChange={this.handleChange}
                       >
                         <option>Select a size</option>
-                        {this.getSizes()}
+                        {this.getSizeOptions()}
                       </Form.Control>
                     </Form.Group>
 
                     <Button
                       type="submit"
                       variant="outline-secondary"
-                      onClick={this.addToBasket}
+                      onClick={e => this.addToBasket(e, product)}
                     >
                       Add To Basket
                     </Button>

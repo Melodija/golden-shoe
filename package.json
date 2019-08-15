@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@livechat/ui-kit": "^0.4.0-5",
+    "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "google-maps-react": "^2.0.2",
     "jest": "24.7.1",
