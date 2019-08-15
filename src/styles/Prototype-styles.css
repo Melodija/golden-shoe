@@ -1,0 +1,79 @@
+.left-sidebar {
+  background-color: #f8f9fa;
+  border: 1px solid #959595;
+}
+
+.shoe-image {
+  width: 100%;
+  height: 15em;
+  margin: 0px;
+  background-color: #f8f9fa;
+  border: 1px solid #959595;
+}
+
+.shoe-details {
+  width: 100%;
+  margin: 0px;
+  background-color: #f8f9fa;
+  border: 1px solid #959595;
+}
+
+.main-image {
+  height: 20em;
+  margin: 0px;
+  background-color: #f8f9fa;
+  border: 1px solid #959595;
+}
+
+.footer {
+  background-color: #f8f9fa;
+  border: 1px solid #959595;
+  font-size: 0.5em;
+}
+
+.category {
+  background-color: transparent;
+}
+
+a {
+  color: #757575;
+}
+
+a:hover {
+  color: #4b4b4b;
+  text-decoration: none;
+}
+
+.rcw-new-message {
+  font-size: 2em;
+}
+
+.rcw-conversation-container > .rcw-header {
+  background-color: #959595;
+}
+
+.rcw-client {
+  background-color: #959595;
+  color: white;
+}
+
+.rcw-launcher {
+  background-color: #959595;
+}
+
+.rcw-close-button {
+  background-color: transparent !important;
+}
+
+.rcw-close {
+  background-color: transparent !important;
+}
+
+span {
+  font-size: 2em;
+}
+
+button.close {
+  font-size: 1em;
+  padding: 0.5em !important;
+}
