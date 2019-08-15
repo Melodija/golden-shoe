@@ -86,6 +86,31 @@ class PrototypeProduct extends Component {
     }
   };
 
+  renderAddToBasket = () => {
+    if (this.state.selectedSize != null) {
+      return (
+        <Button
+          type="submit"
+          variant="outline-secondary"
+          onClick={this.addToBasket}
+        >
+          Add To Basket
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        disabled
+        type="submit"
+        variant="outline-secondary"
+        onClick={this.addToBasket}
+      >
+        Add To Basket
+      </Button>
+    );
+  };
+
   addToBasket = (e, product) => {
     e.preventDefault();
 
@@ -100,7 +125,8 @@ class PrototypeProduct extends Component {
       return this.state.selectedSize == item.size;
     });
 
-    let newStock = this.state.product.stock[index].quantity - 1;
+    let newStock =
+      index != -1 ? this.state.product.stock[index].quantity - 1 : null;
 
     const allItems = JSON.parse(localStorage.getItem("basket")) || [];
 
@@ -185,14 +211,7 @@ class PrototypeProduct extends Component {
                         {this.getSizeOptions()}
                       </Form.Control>
                     </Form.Group>
-
-                    <Button
-                      type="submit"
-                      variant="outline-secondary"
-                      onClick={e => this.addToBasket(e, product)}
-                    >
-                      Add To Basket
-                    </Button>
+                    {this.renderAddToBasket()}
                   </Form>
                   {this.throwAlert()}
                 </Col>

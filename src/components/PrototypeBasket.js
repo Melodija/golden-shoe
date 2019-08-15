@@ -54,7 +54,7 @@ class Basket extends Component {
   basketOfItems = () => {
     if (this.state.shoes == null || this.state.shoes.length < 1) {
       return (
-        <div className="basket-details text-center">
+        <div className="basket-details text-center mb-3">
           There are no items in your basket
         </div>
       );
@@ -120,11 +120,11 @@ class Basket extends Component {
     return (
       <Container className="basket-container">
         <Row>
-          <Col sm="7">
+          <Col md={7}>
             {this.basketOfItems()}
             {this.askGiftWrap()}
           </Col>
-          <Col sm="5" className="basket-summary basket-details">
+          <Col md={5} className="basket-summary basket-details">
             <h2 className="basket-summary_title text-center">Summary</h2>
             <Row>
               <Col className="ml-4">

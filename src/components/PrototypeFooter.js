@@ -68,7 +68,7 @@ class PrototypeFooter extends Component {
             <p>
               Our shopping cart will store your items if you choose not to
               purchase these at this moment. To learn more about the shopping
-              cart process click here: ....
+              cart process click <a href="/basket">here</a>
             </p>
           </Col>
         </Row>
